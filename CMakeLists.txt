@@ -16,7 +16,7 @@
 # along with WinBridgeAgent. If not, see <https://www.gnu.org/licenses/\>.
 
 cmake_minimum_required(VERSION 3.20)
-project(WinBridgeAgent VERSION 0.8.103 LANGUAGES CXX)
+project(WinBridgeAgent VERSION 0.8.104 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -74,7 +74,6 @@ target_include_directories(clawdesk_lib PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/third_party/cpp-httplib"
     "${CMAKE_CURRENT_SOURCE_DIR}/third_party/nlohmann-json/include"
-    "${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb"
 )
 target_compile_definitions(clawdesk_lib PRIVATE 
     CLAWDESK_VERSION="${PROJECT_VERSION}"

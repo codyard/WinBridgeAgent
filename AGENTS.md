@@ -5,7 +5,7 @@
 - `include/`: Public headers mirroring the `src/` layout.
 - `tests/`: CMake-based tests with `tests/unit` and `tests/integration`.
 - `resources/`: Runtime assets and templates, including `resources/config.template.json`.
-- `third_party/`: Vendored dependencies (e.g., `cpp-httplib`, `nlohmann-json`, `stb`).
+- `third_party/`: Vendored dependencies (e.g., `cpp-httplib`, `nlohmann-json`).
 - `build/x64/`, `build/x86/`: Generated build outputs.
 
 ## Build, Test, and Development Commands
