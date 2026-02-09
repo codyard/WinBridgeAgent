@@ -11,15 +11,16 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  tag:
     runs-on: windows-latest
-
+    outputs:
+      tag: ${{ steps.ver.outputs.tag }}
+      version: ${{ steps.ver.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: recursive
 
       - name: Read version and tag name
         id: ver
@@ -37,14 +38,12 @@ jobs:
           Write-Host "version=$version tag=$tag"
 
       - name: Create tag (if missing)
-        id: tag
         shell: bash
         run: |
           set -euo pipefail
           TAG="${{ steps.ver.outputs.tag }}"
           if git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
             echo "Tag ${TAG} already exists"
-            echo "created=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -52,23 +51,75 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a "${TAG}" -m "Release ${TAG}"
           git push origin "${TAG}"
-          echo "created=true" >> "$GITHUB_OUTPUT"
 
-      - name: Configure CMake
+  build:
+    runs-on: windows-latest
+    needs: tag
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, Win32, ARM64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Probe toolchain (${{ matrix.arch }})
+        id: probe
+        shell: pwsh
+        run: |
+          $arch = "${{ matrix.arch }}"
+          if ($arch -ne "ARM64") {
+            "supported=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            exit 0
+          }
+
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} "Microsoft Visual Studio\\Installer\\vswhere.exe"
+          if (-not (Test-Path $vswhere)) {
+            Write-Host "vswhere not found, skipping ARM64 build"
+            "supported=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            exit 0
+          }
+
+          # Check whether ARM64 VC tools are installed on this runner.
+          $inst = & $vswhere -products * -requires Microsoft.VisualStudio.Component.VC.Tools.ARM64 -property installationPath 2>$null
+          if ([string]::IsNullOrWhiteSpace($inst)) {
+            Write-Host "ARM64 VC tools not installed, skipping ARM64 build"
+            "supported=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            exit 0
+          }
+
+          Write-Host "ARM64 VC tools detected at: $inst"
+          "supported=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Configure CMake (${{ matrix.arch }})
+        if: steps.probe.outputs.supported == 'true'
         shell: bash
         run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=Release -DCLAWDESK_ENABLE_OPENSSL=OFF -DCLAWDESK_BUILD_TESTS=OFF -S .
+          set -euo pipefail
+          cmake -S . -B "build-${{ matrix.arch }}" \
+            -G "Visual Studio 17 2022" -A "${{ matrix.arch }}" \
+            -DCLAWDESK_ENABLE_OPENSSL=OFF \
+            -DCLAWDESK_BUILD_TESTS=OFF
 
-      - name: Build
-        run: cmake --build build --config Release
+      - name: Build (${{ matrix.arch }})
+        if: steps.probe.outputs.supported == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake --build "build-${{ matrix.arch }}" --config Release
 
-      - name: Package binaries
+      - name: Package (${{ matrix.arch }})
+        if: steps.probe.outputs.supported == 'true'
         id: package
         shell: pwsh
         run: |
-          $buildDir = Join-Path $env:GITHUB_WORKSPACE "build"
+          $arch = "${{ matrix.arch }}"
+          $tag = "${{ needs.tag.outputs.tag }}"
           $config = "Release"
-          $tag = "${{ steps.ver.outputs.tag }}"
+          $buildDir = Join-Path $env:GITHUB_WORKSPACE ("build-" + $arch)
 
           $distDir = Join-Path $buildDir "dist"
           New-Item -ItemType Directory -Force -Path $distDir | Out-Null
@@ -88,21 +139,41 @@ jobs:
             }
           }
 
-          $zipName = "WinBridgeAgent-$tag-windows-$config.zip"
+          # Normalize arch label: Win32 -> x86
+          $archLabel = $arch
+          if ($arch -eq "Win32") { $archLabel = "x86" }
+          if ($arch -eq "ARM64") { $archLabel = "arm64" }
+
+          $zipName = "WinBridgeAgent-$tag-windows-$archLabel-$config.zip"
           $zipPath = Join-Path $buildDir $zipName
           if (Test-Path $zipPath) { Remove-Item -Force $zipPath }
           Compress-Archive -Path (Join-Path $distDir "*") -DestinationPath $zipPath
 
-          "zip_path=build/$zipName" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "zip_path=$zipPath" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Upload artifact (${{ matrix.arch }})
+        if: steps.probe.outputs.supported == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.arch }}
+          path: ${{ steps.package.outputs.zip_path }}
+
+  release:
+    runs-on: windows-latest
+    needs: [tag, build]
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
 
       - name: Create GitHub Release
-        # Avoid failing the workflow if the release already exists (e.g. reruns)
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.ver.outputs.tag }}
-          name: ${{ steps.ver.outputs.tag }}
-          files: ${{ steps.package.outputs.zip_path }}
+          tag_name: ${{ needs.tag.outputs.tag }}
+          name: ${{ needs.tag.outputs.tag }}
+          files: |
+            artifacts/**/WinBridgeAgent-*.zip
           generate_release_notes: true
-

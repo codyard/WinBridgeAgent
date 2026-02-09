@@ -16,7 +16,7 @@
 # along with WinBridgeAgent. If not, see <https://www.gnu.org/licenses/\>.
 
 cmake_minimum_required(VERSION 3.20)
-project(WinBridgeAgent VERSION 0.8.109 LANGUAGES CXX)
+project(WinBridgeAgent VERSION 0.8.111 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -39,6 +39,35 @@ list(REMOVE_ITEM CLAWDESK_LIB_SOURCES
 )
 
 add_library(clawdesk_lib STATIC ${CLAWDESK_LIB_SOURCES})
+
+# --- Windows version info resources (File Properties -> Details) ---
+# Configure separate VERSIONINFO resources per executable so FileDescription and
+# OriginalFilename match the binary.
+set(WBA_COMPANY_NAME "Codyard")
+set(WBA_PRODUCT_NAME "WinBridgeAgent MCP Server")
+set(WBA_LEGAL_COPYRIGHT "Copyright (C) 2026 Codyard")
+set(WBA_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(WBA_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(WBA_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(WBA_VERSION_STR "${PROJECT_VERSION}")
+
+set(WBA_FILE_DESCRIPTION "WinBridgeAgent MCP Server")
+set(WBA_INTERNAL_NAME "WinBridgeAgent")
+set(WBA_ORIGINAL_FILENAME "WinBridgeAgent.exe")
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/resources/version_info.rc.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/version_info_winbridgeagent.rc"
+    @ONLY
+)
+
+set(WBA_FILE_DESCRIPTION "WinBridgeAgent MCP Server Daemon")
+set(WBA_INTERNAL_NAME "WinBridgeAgentDaemon")
+set(WBA_ORIGINAL_FILENAME "WinBridgeAgentDaemon.exe")
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/resources/version_info.rc.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/version_info_daemon.rc"
+    @ONLY
+)
 
 # --- Targets ---
 # 主程序
@@ -82,7 +111,11 @@ target_compile_definitions(WinBridgeAgent PRIVATE
     CLAWDESK_VERSION="${PROJECT_VERSION}"
 )
 if(WIN32)
-    target_sources(WinBridgeAgent PRIVATE resources/settings_window.rc resources/app_icon.rc)
+    target_sources(WinBridgeAgent PRIVATE
+        resources/settings_window.rc
+        resources/app_icon.rc
+        "${CMAKE_CURRENT_BINARY_DIR}/version_info_winbridgeagent.rc"
+    )
     target_link_libraries(WinBridgeAgent PRIVATE
         ws2_32 gdi32 gdiplus user32 shell32 comdlg32 advapi32 ole32 uuid shlwapi 
         psapi powrprof comctl32 crypt32 dbghelp winhttp
@@ -102,7 +135,10 @@ target_compile_definitions(WinBridgeAgentDaemon PRIVATE
     CLAWDESK_VERSION="${PROJECT_VERSION}"
 )
 if(WIN32)
-    target_sources(WinBridgeAgentDaemon PRIVATE resources/app_icon.rc)
+    target_sources(WinBridgeAgentDaemon PRIVATE
+        resources/app_icon.rc
+        "${CMAKE_CURRENT_BINARY_DIR}/version_info_daemon.rc"
+    )
     target_link_libraries(WinBridgeAgentDaemon PRIVATE
         ws2_32 gdi32 gdiplus user32 shell32 comdlg32 advapi32 ole32 uuid shlwapi 
         psapi powrprof comctl32 crypt32

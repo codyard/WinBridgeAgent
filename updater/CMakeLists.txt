@@ -29,7 +29,35 @@ add_executable(Updater WIN32 updater.cpp)
 
 # Windows 特定链接库
 if(WIN32)
+    # --- VERSIONINFO resource (File Properties -> Details) ---
+    set(WBA_COMPANY_NAME "Codyard")
+    set(WBA_PRODUCT_NAME "WinBridgeAgent MCP Server")
+    set(WBA_LEGAL_COPYRIGHT "Copyright (C) 2026 Codyard")
+
+    # When built as a subdirectory of the main project, prefer its version.
+    if(DEFINED WinBridgeAgent_VERSION_MAJOR)
+        set(WBA_VERSION_MAJOR ${WinBridgeAgent_VERSION_MAJOR})
+        set(WBA_VERSION_MINOR ${WinBridgeAgent_VERSION_MINOR})
+        set(WBA_VERSION_PATCH ${WinBridgeAgent_VERSION_PATCH})
+        set(WBA_VERSION_STR "${WinBridgeAgent_VERSION}")
+    else()
+        set(WBA_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+        set(WBA_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+        set(WBA_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+        set(WBA_VERSION_STR "${PROJECT_VERSION}")
+    endif()
+
+    set(WBA_FILE_DESCRIPTION "WinBridgeAgent MCP Server Updater")
+    set(WBA_INTERNAL_NAME "Updater")
+    set(WBA_ORIGINAL_FILENAME "Updater.exe")
+    configure_file(
+        "${CMAKE_CURRENT_LIST_DIR}/../resources/version_info.rc.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/version_info_updater.rc"
+        @ONLY
+    )
+
     target_sources(Updater PRIVATE updater.rc)
+    target_sources(Updater PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/version_info_updater.rc")
     target_link_libraries(Updater
         shlwapi     # Shell API
     )
