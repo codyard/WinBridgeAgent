@@ -1,34 +1,27 @@
-# Copyright (C) 2026 Codyard
+# Unit tests (open-source edition)
 #
-# This file is part of WinBridgeAgent.
-#
-# WinBridgeAgent is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# WinBridgeAgent is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with WinBridgeAgent. If not, see <https://www.gnu.org/licenses/\>.
+# Current tests are standalone executables using assert() and their own main().
+# Build each test file as a separate binary so we don't get multiple-definition
+# errors when linking.
 
-# 查找所有单元测试源文件
-file(GLOB TEST_SOURCES "unit/*.cpp")
+file(GLOB TEST_SOURCES CONFIGURE_DEPENDS "unit/test_*.cpp")
 
-# 添加测试可执行文件
-add_executable(run_tests ${TEST_SOURCES})
+foreach(test_file ${TEST_SOURCES})
+    get_filename_component(test_name ${test_file} NAME_WE)
 
-# 链接 clawdesk_lib (业务代码) 和 GoogleTest
-target_link_libraries(run_tests PRIVATE
-    clawdesk_lib
-    GTest::gtest_main
-)
+    add_executable(${test_name} ${test_file})
+    target_link_libraries(${test_name} PRIVATE clawdesk_lib)
 
-# 包含 gtest so it can be found
-include(GoogleTest)
+    if(WIN32)
+        target_link_libraries(${test_name} PRIVATE
+            ws2_32 gdi32 gdiplus user32 shell32 comdlg32 advapi32 ole32 uuid
+            shlwapi psapi powrprof comctl32 crypt32 dbghelp winhttp
+        )
+        if(CLAWDESK_ENABLE_OPENSSL)
+            target_link_libraries(${test_name} PRIVATE ssl crypto)
+        endif()
+    endif()
 
-# 自动发现测试用例
-gtest_discover_tests(run_tests)
+    add_test(NAME ${test_name} COMMAND ${test_name})
+endforeach()
+
