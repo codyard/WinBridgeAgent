@@ -78,6 +78,8 @@ WinBridgeAgent is published on the [MCP Registry](https://registry.modelcontextp
 
 WinBridgeAgent works with any MCP-compatible client. Below are setup instructions for popular clients.
 
+> **Note**: Replace `<windows-ip>` with the IP address of the Windows PC running WinBridgeAgent (e.g. `192.168.1.100`). Use `localhost` only if the MCP client runs on the same Windows machine.
+
 ### Claude Desktop
 
 Edit `claude_desktop_config.json`:
@@ -89,14 +91,12 @@ Edit `claude_desktop_config.json`:
 {
     "mcpServers": {
         "winbridgeagent": {
-            "url": "http://localhost:35182",
+            "url": "http://<windows-ip>:35182",
             "transport": "http"
         }
     }
 }
 ```
-
-For a remote Windows PC on your LAN, replace `localhost` with its IP address (e.g. `192.168.1.100`).
 
 ### Cursor
 
@@ -105,7 +105,7 @@ For a remote Windows PC on your LAN, replace `localhost` with its IP address (e.
 3. Fill in:
    - **Name**: `winbridgeagent`
    - **Type**: `http`
-   - **URL**: `http://localhost:35182`
+   - **URL**: `http://<windows-ip>:35182`
 
 Or edit `.cursor/mcp.json` in your project root:
 
@@ -113,7 +113,7 @@ Or edit `.cursor/mcp.json` in your project root:
 {
     "mcpServers": {
         "winbridgeagent": {
-            "url": "http://localhost:35182",
+            "url": "http://<windows-ip>:35182",
             "transport": "http"
         }
     }
@@ -128,7 +128,7 @@ Edit `~/.codeium/windsurf/mcp_config.json`:
 {
     "mcpServers": {
         "winbridgeagent": {
-            "serverUrl": "http://localhost:35182"
+            "serverUrl": "http://<windows-ip>:35182"
         }
     }
 }
@@ -141,14 +141,14 @@ Edit `~/.codeium/windsurf/mcp_config.json`:
 3. Set:
    - **Name**: `winbridgeagent`
    - **Transport**: `HTTP`
-   - **URL**: `http://localhost:35182`
+   - **URL**: `http://<windows-ip>:35182`
 
 ### Cherry Studio
 
 1. Open **Settings** → **MCP Servers**
 2. Click **Add Server**
 3. Select **Streamable HTTP** type
-4. Set URL to `http://localhost:35182`
+4. Set URL to `http://<windows-ip>:35182`
 
 ### Cline (VS Code)
 
@@ -158,7 +158,7 @@ Edit `cline_mcp_settings.json` in your VS Code settings:
 {
     "mcpServers": {
         "winbridgeagent": {
-            "url": "http://localhost:35182",
+            "url": "http://<windows-ip>:35182",
             "transportType": "http"
         }
     }
@@ -203,58 +203,60 @@ The server listens on the configured port (default 35182).
 
 ### Examples
 
+> Replace `<windows-ip>` below with the actual IP of your Windows PC (or use `localhost` if testing on the same machine).
+
 ```bash
 # Server status
-curl http://localhost:35182/status
+curl http://<windows-ip>:35182/health
 
 # List disks
-curl http://localhost:35182/disks
+curl http://<windows-ip>:35182/disks
 
 # List directory
-curl "http://localhost:35182/list?path=C:\\"
+curl "http://<windows-ip>:35182/list?path=C:\\"
 
 # Read file
-curl "http://localhost:35182/read?path=C:\\test.txt"
+curl "http://<windows-ip>:35182/read?path=C:\\test.txt"
 
 # Search file content
-curl "http://localhost:35182/search?path=C:\\test.txt&query=keyword"
+curl "http://<windows-ip>:35182/search?path=C:\\test.txt&query=keyword"
 
 # Read clipboard
-curl http://localhost:35182/clipboard
+curl http://<windows-ip>:35182/clipboard
 
 # Write clipboard
 curl -X PUT -H "Content-Type: application/json" \
-  -d '{"content":"Hello World"}' http://localhost:35182/clipboard
+  -d '{"content":"Hello World"}' http://<windows-ip>:35182/clipboard
 
 # Take screenshot
-curl http://localhost:35182/screenshot
+curl http://<windows-ip>:35182/screenshot
 
 # List windows
-curl http://localhost:35182/windows
+curl http://<windows-ip>:35182/windows
 
 # List processes
-curl http://localhost:35182/processes
+curl http://<windows-ip>:35182/processes
 
 # Execute command
 curl -X POST -H "Content-Type: application/json" \
-  -d '{"command":"echo Hello"}' http://localhost:35182/execute
+  -d '{"command":"echo Hello"}' http://<windows-ip>:35182/execute
 
 # MCP: Initialize
 curl -X POST -H "Content-Type: application/json" \
   -d '{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}' \
-  http://localhost:35182/mcp/initialize
+  http://<windows-ip>:35182/mcp/initialize
 
 # MCP: List tools
 curl -X POST -H "Content-Type: application/json" \
-  -d '{}' http://localhost:35182/mcp/tools/list
+  -d '{}' http://<windows-ip>:35182/mcp/tools/list
 
 # MCP: Call tool
 curl -X POST -H "Content-Type: application/json" \
   -d '{"name":"list_windows","arguments":{}}' \
-  http://localhost:35182/mcp/tools/call
-```
+  http://<windows-ip>:35182/mcp/tools/call
 
-## Multi-Computer Setup
+# Shutdown server
+curl http://<windows-ip>:35182/exit
 
 If you have multiple computers with WinBridgeAgent installed on your LAN, configure your MCP client to manage them:
 

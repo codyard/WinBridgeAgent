@@ -81,6 +81,8 @@ WinBridgeAgent 已发布到 [MCP Registry](https://registry.modelcontextprotocol
 
 WinBridgeAgent 可与任何兼容 MCP 的客户端配合使用。以下是常用客户端的配置方法。
 
+> **注意**: 请将 `<windows-ip>` 替换为运行 WinBridgeAgent 的 Windows 电脑的 IP 地址（如 `192.168.1.100`）。仅当 MCP 客户端运行在同一台 Windows 机器上时才使用 `localhost`。
+
 ### Claude Desktop
 
 编辑 `claude_desktop_config.json`：
@@ -92,14 +94,12 @@ WinBridgeAgent 可与任何兼容 MCP 的客户端配合使用。以下是常用
 {
     "mcpServers": {
         "winbridgeagent": {
-            "url": "http://localhost:35182",
+            "url": "http://<windows-ip>:35182",
             "transport": "http"
         }
     }
 }
 ```
-
-如需连接局域网中的远程 Windows 电脑，将 `localhost` 替换为目标 IP 地址（如 `192.168.1.100`）。
 
 ### Cursor
 
@@ -108,7 +108,7 @@ WinBridgeAgent 可与任何兼容 MCP 的客户端配合使用。以下是常用
 3. 填写：
    - **Name**: `winbridgeagent`
    - **Type**: `http`
-   - **URL**: `http://localhost:35182`
+   - **URL**: `http://<windows-ip>:35182`
 
 或编辑项目根目录下的 `.cursor/mcp.json`：
 
@@ -116,7 +116,7 @@ WinBridgeAgent 可与任何兼容 MCP 的客户端配合使用。以下是常用
 {
     "mcpServers": {
         "winbridgeagent": {
-            "url": "http://localhost:35182",
+            "url": "http://<windows-ip>:35182",
             "transport": "http"
         }
     }
@@ -131,7 +131,7 @@ WinBridgeAgent 可与任何兼容 MCP 的客户端配合使用。以下是常用
 {
     "mcpServers": {
         "winbridgeagent": {
-            "serverUrl": "http://localhost:35182"
+            "serverUrl": "http://<windows-ip>:35182"
         }
     }
 }
@@ -144,14 +144,14 @@ WinBridgeAgent 可与任何兼容 MCP 的客户端配合使用。以下是常用
 3. 设置：
    - **名称**: `winbridgeagent`
    - **传输方式**: `HTTP`
-   - **URL**: `http://localhost:35182`
+   - **URL**: `http://<windows-ip>:35182`
 
 ### Cherry Studio
 
 1. 打开 **设置** → **MCP 服务器**
 2. 点击 **添加服务器**
 3. 选择 **Streamable HTTP** 类型
-4. 设置 URL 为 `http://localhost:35182`
+4. 设置 URL 为 `http://<windows-ip>:35182`
 
 ### Cline (VS Code)
 
@@ -161,7 +161,7 @@ WinBridgeAgent 可与任何兼容 MCP 的客户端配合使用。以下是常用
 {
     "mcpServers": {
         "winbridgeagent": {
-            "url": "http://localhost:35182",
+            "url": "http://<windows-ip>:35182",
             "transportType": "http"
         }
     }
@@ -247,7 +247,7 @@ AI: [调用 clawdesk-test 的截图工具]
 #### 1. API 列表
 
 ```bash
-GET http://localhost:35182/
+GET http://<windows-ip>:35182/
 ```
 
 返回所有可用的 API 端点列表。
@@ -255,7 +255,7 @@ GET http://localhost:35182/
 #### 2. 健康检查
 
 ```bash
-GET http://localhost:35182/health
+GET http://<windows-ip>:35182/health
 ```
 
 响应：
@@ -267,7 +267,7 @@ GET http://localhost:35182/health
 #### 3. 获取状态
 
 ```bash
-GET http://localhost:35182/status
+GET http://<windows-ip>:35182/status
 ```
 
 响应：
@@ -287,7 +287,7 @@ GET http://localhost:35182/status
 #### 4. 获取磁盘列表
 
 ```bash
-GET http://localhost:35182/disks
+GET http://<windows-ip>:35182/disks
 ```
 
 响应：
@@ -309,7 +309,7 @@ GET http://localhost:35182/disks
 #### 5. 列出目录内容
 
 ```bash
-GET http://localhost:35182/list?path=C:\Users
+GET http://<windows-ip>:35182/list?path=C:\Users
 ```
 
 响应：
@@ -335,16 +335,16 @@ GET http://localhost:35182/list?path=C:\Users
 
 ```bash
 # 读取整个文件
-GET http://localhost:35182/read?path=C:\test.txt
+GET http://<windows-ip>:35182/read?path=C:\test.txt
 
 # 从第 10 行开始读取 20 行
-GET http://localhost:35182/read?path=C:\test.txt&start=10&lines=20
+GET http://<windows-ip>:35182/read?path=C:\test.txt&start=10&lines=20
 
 # 读取最后 50 行
-GET http://localhost:35182/read?path=C:\test.txt&tail=50
+GET http://<windows-ip>:35182/read?path=C:\test.txt&tail=50
 
 # 只获取行数
-GET http://localhost:35182/read?path=C:\test.txt&count=true
+GET http://<windows-ip>:35182/read?path=C:\test.txt&count=true
 ```
 
 响应：
@@ -364,13 +364,13 @@ GET http://localhost:35182/read?path=C:\test.txt&count=true
 
 ```bash
 # 区分大小写搜索
-GET http://localhost:35182/search?path=C:\test.txt&query=keyword
+GET http://<windows-ip>:35182/search?path=C:\test.txt&query=keyword
 
 # 不区分大小写搜索
-GET http://localhost:35182/search?path=C:\test.txt&query=keyword&case=i
+GET http://<windows-ip>:35182/search?path=C:\test.txt&query=keyword&case=i
 
 # 限制结果数量
-GET http://localhost:35182/search?path=C:\test.txt&query=keyword&max=50
+GET http://<windows-ip>:35182/search?path=C:\test.txt&query=keyword&max=50
 ```
 
 响应：
@@ -396,7 +396,7 @@ GET http://localhost:35182/search?path=C:\test.txt&query=keyword&max=50
 **增强功能**：支持文本、图片和文件三种类型！
 
 ```bash
-GET http://localhost:35182/clipboard
+GET http://<windows-ip>:35182/clipboard
 ```
 
 响应类型 1 - 文本：
@@ -451,7 +451,7 @@ curl "http://192.168.31.3:35182/clipboard/file/20260203_223015_0_document.pdf" \
 #### 9. 写入剪贴板
 
 ```bash
-PUT http://localhost:35182/clipboard
+PUT http://<windows-ip>:35182/clipboard
 Content-Type: application/json
 
 {
@@ -474,10 +474,10 @@ Content-Type: application/json
 
 ```bash
 # PNG 格式（默认）
-GET http://localhost:35182/screenshot
+GET http://<windows-ip>:35182/screenshot
 
 # JPEG 格式
-GET http://localhost:35182/screenshot?format=jpg
+GET http://<windows-ip>:35182/screenshot?format=jpg
 ```
 
 响应：
@@ -565,7 +565,7 @@ curl "http://192.168.31.3:35182/screenshot/file/screenshot_20260205_102530.png" 
 #### 11. 获取窗口列表
 
 ```bash
-GET http://localhost:35182/windows
+GET http://<windows-ip>:35182/windows
 ```
 
 响应：
@@ -591,7 +591,7 @@ GET http://localhost:35182/windows
 #### 12. 获取进程列表
 
 ```bash
-GET http://localhost:35182/processes
+GET http://<windows-ip>:35182/processes
 ```
 
 响应：
@@ -612,7 +612,7 @@ GET http://localhost:35182/processes
 #### 13. 执行命令
 
 ```bash
-POST http://localhost:35182/execute
+POST http://<windows-ip>:35182/execute
 Content-Type: application/json
 
 {
@@ -635,7 +635,7 @@ Content-Type: application/json
 ##### 初始化连接
 
 ```bash
-POST http://localhost:35182/mcp/initialize
+POST http://<windows-ip>:35182/mcp/initialize
 Content-Type: application/json
 
 {
@@ -666,7 +666,7 @@ Content-Type: application/json
 ##### 列出可用工具
 
 ```bash
-POST http://localhost:35182/mcp/tools/list
+POST http://<windows-ip>:35182/mcp/tools/list
 Content-Type: application/json
 
 {}
@@ -697,7 +697,7 @@ Content-Type: application/json
 ##### 调用工具
 
 ```bash
-POST http://localhost:35182/mcp/tools/call
+POST http://<windows-ip>:35182/mcp/tools/call
 Content-Type: application/json
 
 {
@@ -767,7 +767,7 @@ Content-Type: application/json
 #### 15. 退出服务器
 
 ```bash
-GET http://localhost:35182/exit
+GET http://<windows-ip>:35182/exit
 ```
 
 响应：
@@ -778,96 +778,98 @@ GET http://localhost:35182/exit
 
 ### 使用示例
 
+> 请将 `<windows-ip>` 替换为 Windows 电脑的实际 IP 地址（或在同一台机器上测试时使用 `localhost`）。
+
 使用 curl 测试：
 
 ```bash
 # 检查服务器状态
-curl http://localhost:35182/status
+curl http://<windows-ip>:35182/status
 
 # 健康检查
-curl http://localhost:35182/health
+curl http://<windows-ip>:35182/health
 
 # 获取磁盘列表
-curl http://localhost:35182/disks
+curl http://<windows-ip>:35182/disks
 
 # 列出目录
-curl "http://localhost:35182/list?path=C:\\"
+curl "http://<windows-ip>:35182/list?path=C:\\"
 
 # 读取文件
-curl "http://localhost:35182/read?path=C:\\test.txt"
+curl "http://<windows-ip>:35182/read?path=C:\\test.txt"
 
 # 搜索文件内容
-curl "http://localhost:35182/search?path=C:\\test.txt&query=keyword"
+curl "http://<windows-ip>:35182/search?path=C:\\test.txt&query=keyword"
 
 # 读取剪贴板
-curl http://localhost:35182/clipboard
+curl http://<windows-ip>:35182/clipboard
 
 # 写入剪贴板
 curl -X PUT -H "Content-Type: application/json" \
-  -d '{"content":"Hello World"}' http://localhost:35182/clipboard
+  -d '{"content":"Hello World"}' http://<windows-ip>:35182/clipboard
 
 # 截图
-curl http://localhost:35182/screenshot | jq -r '.url'
+curl http://<windows-ip>:35182/screenshot | jq -r '.url'
 
 # 获取窗口列表
-curl http://localhost:35182/windows | jq '.[0:5]'
+curl http://<windows-ip>:35182/windows | jq '.[0:5]'
 
 # 获取进程列表
-curl http://localhost:35182/processes | jq '.[0:5]'
+curl http://<windows-ip>:35182/processes | jq '.[0:5]'
 
 # 执行命令
 curl -X POST -H "Content-Type: application/json" \
-  -d '{"command":"echo Hello"}' http://localhost:35182/execute | jq .
+  -d '{"command":"echo Hello"}' http://<windows-ip>:35182/execute | jq .
 
 # MCP 协议：初始化
 curl -X POST -H "Content-Type: application/json" \
   -d '{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}' \
-  http://localhost:35182/mcp/initialize | jq .
+  http://<windows-ip>:35182/mcp/initialize | jq .
 
 # MCP 协议：列出工具
 curl -X POST -H "Content-Type: application/json" \
-  -d '{}' http://localhost:35182/mcp/tools/list | jq '.tools | length'
+  -d '{}' http://<windows-ip>:35182/mcp/tools/list | jq '.tools | length'
 
 # MCP 协议：调用工具
 curl -X POST -H "Content-Type: application/json" \
   -d '{"name":"list_windows","arguments":{}}' \
-  http://localhost:35182/mcp/tools/call | jq .
+  http://<windows-ip>:35182/mcp/tools/call | jq .
 
 # 退出服务器
-curl http://localhost:35182/exit
+curl http://<windows-ip>:35182/exit
 ```
 
 使用 PowerShell：
 
 ```powershell
 # 检查状态
-Invoke-WebRequest -Uri "http://localhost:35182/status"
+Invoke-WebRequest -Uri "http://<windows-ip>:35182/status"
 
 # 读取剪贴板
-Invoke-WebRequest -Uri "http://localhost:35182/clipboard"
+Invoke-WebRequest -Uri "http://<windows-ip>:35182/clipboard"
 
 # 写入剪贴板
 $body = @{ content = "Hello World" } | ConvertTo-Json
-Invoke-WebRequest -Uri "http://localhost:35182/clipboard" `
+Invoke-WebRequest -Uri "http://<windows-ip>:35182/clipboard" `
   -Method PUT -ContentType "application/json" -Body $body
 
 # 截图
-$response = Invoke-RestMethod -Uri "http://localhost:35182/screenshot"
+$response = Invoke-RestMethod -Uri "http://<windows-ip>:35182/screenshot"
 $response.url
 
 # 获取窗口列表
-Invoke-RestMethod -Uri "http://localhost:35182/windows"
+Invoke-RestMethod -Uri "http://<windows-ip>:35182/windows"
 
 # 获取进程列表
-Invoke-RestMethod -Uri "http://localhost:35182/processes"
+Invoke-RestMethod -Uri "http://<windows-ip>:35182/processes"
 
 # 执行命令
 $body = @{ command = "dir C:\" } | ConvertTo-Json
-Invoke-RestMethod -Uri "http://localhost:35182/execute" `
+Invoke-RestMethod -Uri "http://<windows-ip>:35182/execute" `
   -Method POST -ContentType "application/json" -Body $body
 
 # 退出服务器
-Invoke-WebRequest -Uri "http://localhost:35182/exit"
+Invoke-WebRequest -Uri "http://<windows-ip>:35182/exit"
 ```
 
 ## 托盘菜单功能
@@ -1001,7 +1003,7 @@ make -j$(sysctl -n hw.ncpu)
 
 4. **网络访问**：
     - 本地访问: `http://localhost:35182`
-    - 局域网访问: `http://192.168.x.x:35182`（需要 listen_address 设置为 "0.0.0.0"）
+    - 局域网访问: `http://<windows-ip>:35182`（需要 listen_address 设置为 "0.0.0.0"）
 
 ## 安全注意事项
 
