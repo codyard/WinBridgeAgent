@@ -45,7 +45,23 @@ jobs:
             c_compiler: cl
 
     steps:
-    - uses: actions/checkout@v4
+    # GitHub occasionally returns transient 5xx for git fetch on hosted runners.
+    # Add a simple retry to reduce flaky CI failures.
+    - name: Checkout (attempt 1)
+      id: checkout1
+      uses: actions/checkout@v4
+      continue-on-error: true
+
+    - name: Wait before retry
+      if: steps.checkout1.outcome == 'failure'
+      run: |
+        echo "Checkout failed, waiting 30 seconds before retry..."
+        sleep 30
+      shell: bash
+
+    - name: Checkout (attempt 2)
+      if: steps.checkout1.outcome == 'failure'
+      uses: actions/checkout@v4
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
