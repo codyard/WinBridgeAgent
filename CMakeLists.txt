@@ -42,7 +42,10 @@ add_library(clawdesk_lib STATIC ${CLAWDESK_LIB_SOURCES})
 
 # --- Targets ---
 # 主程序
-add_executable(WinBridgeAgent src/main.cpp)
+#
+# Entry point is WinMain, so this must be a WIN32 subsystem executable on
+# Visual Studio / MSVC as well (otherwise the linker looks for main()).
+add_executable(WinBridgeAgent WIN32 src/main.cpp)
 target_link_libraries(WinBridgeAgent PRIVATE clawdesk_lib)
 
 # 守护进程（最小依赖，不链接 clawdesk_lib）

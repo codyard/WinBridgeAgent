@@ -22,7 +22,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # 源文件
-add_executable(Updater updater.cpp)
+#
+# Entry point is WinMain, so this must be a WIN32 subsystem executable on
+# Visual Studio / MSVC as well (otherwise the linker looks for main()).
+add_executable(Updater WIN32 updater.cpp)
 
 # Windows 特定链接库
 if(WIN32)
