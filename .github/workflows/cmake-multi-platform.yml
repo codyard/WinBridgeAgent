@@ -5,8 +5,12 @@ name: CMake (Windows)
 on:
   push:
     branches: [ "main" ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ "main" ]
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -59,6 +63,55 @@ jobs:
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+
+    - name: Package binaries
+      id: package
+      shell: pwsh
+      run: |
+        $buildDir = "${{ steps.strings.outputs.build-output-dir }}"
+        $config = "${{ matrix.build_type }}"
+
+        $distDir = Join-Path $buildDir "dist"
+        New-Item -ItemType Directory -Force -Path $distDir | Out-Null
+
+        $items = @(
+          @{ src = (Join-Path $buildDir "$config\\WinBridgeAgent.exe"); dst = "WinBridgeAgent.exe" },
+          @{ src = (Join-Path $buildDir "$config\\WinBridgeAgentDaemon.exe"); dst = "WinBridgeAgentDaemon.exe" },
+          @{ src = (Join-Path $buildDir "updater\\$config\\Updater.exe"); dst = "Updater.exe" }
+        )
+
+        foreach ($i in $items) {
+          if (Test-Path $i.src) {
+            Copy-Item -Force $i.src (Join-Path $distDir $i.dst)
+            Write-Host "Copied: $($i.src) -> $($i.dst)"
+          } else {
+            Write-Host "Missing: $($i.src)"
+          }
+        }
+
+        $zipName = "WinBridgeAgent-${{ github.ref_name }}-windows-${config}.zip"
+        if ("${{ github.ref_name }}" -eq "" -or "${{ github.ref_name }}" -eq "main") {
+          $zipName = "WinBridgeAgent-windows-${config}.zip"
+        }
+
+        $zipPath = Join-Path $buildDir $zipName
+        if (Test-Path $zipPath) { Remove-Item -Force $zipPath }
+        Compress-Archive -Path (Join-Path $distDir "*") -DestinationPath $zipPath
+
+        "zip_path=$zipPath" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: WinBridgeAgent-windows-${{ matrix.build_type }}
+        path: ${{ steps.package.outputs.zip_path }}
+
+    - name: Create GitHub Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ${{ steps.package.outputs.zip_path }}
+        generate_release_notes: true
 
     # Tests are currently flaky / environment-dependent on GitHub-hosted runners.
     # Keep local test builds available, but skip in CI for now.
