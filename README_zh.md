@@ -1,6 +1,11 @@
 # WinBridgeAgent
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Platform: Windows](https://img.shields.io/badge/Platform-Windows%2010%2F11-0078D6?logo=windows)](https://github.com/codyard/WinBridgeAgent)
+[![C++17](https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus)](https://en.cppreference.com/w/cpp/17)
+[![MCP Protocol](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-green)](https://modelcontextprotocol.io)
+[![GitHub Release](https://img.shields.io/github/v/release/codyard/WinBridgeAgent?include_prereleases&sort=semver)](https://github.com/codyard/WinBridgeAgent/releases)
+[![GitHub Stars](https://img.shields.io/github/stars/codyard/WinBridgeAgent?style=social)](https://github.com/codyard/WinBridgeAgent)
 
 [English](README.md)
 
