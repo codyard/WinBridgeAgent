@@ -1,5 +1,7 @@
 # WinBridgeAgent - MCP 协议文档
 
+[English](MCP.md)
+
 ## 概述
 
 WinBridgeAgent 实现了 Model Context Protocol (MCP) 标准协议，使 AI 助手能够通过标准化的方式调用 Windows 系统功能。
