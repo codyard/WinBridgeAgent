@@ -1,0 +1,108 @@
+name: Release (Windows)
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "CMakeLists.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Read version and tag name
+        id: ver
+        shell: pwsh
+        run: |
+          $cmake = Get-Content -Raw -Path "CMakeLists.txt"
+          if ($cmake -match 'project\(\s*WinBridgeAgent\s+VERSION\s+([0-9]+\.[0-9]+\.[0-9]+)') {
+            $version = $matches[1]
+          } else {
+            throw "Failed to parse version from CMakeLists.txt"
+          }
+          $tag = "v$version"
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          Write-Host "version=$version tag=$tag"
+
+      - name: Create tag (if missing)
+        id: tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.ver.outputs.tag }}"
+          if git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
+            echo "Tag ${TAG} already exists"
+            echo "created=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${TAG}" -m "Release ${TAG}"
+          git push origin "${TAG}"
+          echo "created=true" >> "$GITHUB_OUTPUT"
+
+      - name: Configure CMake
+        shell: bash
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release -DCLAWDESK_ENABLE_OPENSSL=OFF -DCLAWDESK_BUILD_TESTS=OFF -S .
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Package binaries
+        id: package
+        shell: pwsh
+        run: |
+          $buildDir = Join-Path $env:GITHUB_WORKSPACE "build"
+          $config = "Release"
+          $tag = "${{ steps.ver.outputs.tag }}"
+
+          $distDir = Join-Path $buildDir "dist"
+          New-Item -ItemType Directory -Force -Path $distDir | Out-Null
+
+          $items = @(
+            @{ src = (Join-Path $buildDir "$config\\WinBridgeAgent.exe"); dst = "WinBridgeAgent.exe" },
+            @{ src = (Join-Path $buildDir "$config\\WinBridgeAgentDaemon.exe"); dst = "WinBridgeAgentDaemon.exe" },
+            @{ src = (Join-Path $buildDir "updater\\$config\\Updater.exe"); dst = "Updater.exe" }
+          )
+
+          foreach ($i in $items) {
+            if (Test-Path $i.src) {
+              Copy-Item -Force $i.src (Join-Path $distDir $i.dst)
+              Write-Host "Copied: $($i.src) -> $($i.dst)"
+            } else {
+              throw "Missing build output: $($i.src)"
+            }
+          }
+
+          $zipName = "WinBridgeAgent-$tag-windows-$config.zip"
+          $zipPath = Join-Path $buildDir $zipName
+          if (Test-Path $zipPath) { Remove-Item -Force $zipPath }
+          Compress-Archive -Path (Join-Path $distDir "*") -DestinationPath $zipPath
+
+          "zip_path=build/$zipName" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Create GitHub Release
+        # Avoid failing the workflow if the release already exists (e.g. reruns)
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: ${{ steps.ver.outputs.tag }}
+          files: ${{ steps.package.outputs.zip_path }}
+          generate_release_notes: true
+
