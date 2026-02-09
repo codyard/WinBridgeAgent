@@ -127,6 +127,15 @@ Edit `~/.codeium/windsurf/mcp_config.json`:
 }
 ```
 
+### OpenClaw
+
+1. Open **Settings** → **MCP Servers**
+2. Click **Add**
+3. Set:
+   - **Name**: `winbridgeagent`
+   - **Transport**: `HTTP`
+   - **URL**: `http://localhost:35182`
+
 ### Cherry Studio
 
 1. Open **Settings** → **MCP Servers**

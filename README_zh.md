@@ -123,6 +123,15 @@ WinBridgeAgent 可与任何兼容 MCP 的客户端配合使用。以下是常用
 }
 ```
 
+### OpenClaw
+
+1. 打开 **设置** → **MCP 服务器**
+2. 点击 **添加**
+3. 设置：
+   - **名称**: `winbridgeagent`
+   - **传输方式**: `HTTP`
+   - **URL**: `http://localhost:35182`
+
 ### Cherry Studio
 
 1. 打开 **设置** → **MCP 服务器**
