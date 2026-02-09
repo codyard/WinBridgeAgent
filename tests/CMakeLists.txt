@@ -22,6 +22,8 @@ foreach(test_file ${TEST_SOURCES})
         endif()
     endif()
 
-    add_test(NAME ${test_name} COMMAND ${test_name})
+    # Use TARGET_FILE so CTest can locate the correct binary on multi-config
+    # generators (Visual Studio) and when tests are built from subdirectories.
+    add_test(NAME ${test_name} COMMAND $<TARGET_FILE:${test_name}>)
+    set_tests_properties(${test_name} PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 endforeach()
-
