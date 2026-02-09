@@ -19,6 +19,7 @@
 #ifndef CLAWDESK_TRAY_APP_H
 #define CLAWDESK_TRAY_APP_H
 
+#include <winsock2.h> // must be included before windows.h
 #include <windows.h>
 #include <shellapi.h>
 

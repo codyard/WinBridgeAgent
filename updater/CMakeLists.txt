@@ -26,6 +26,7 @@ add_executable(Updater updater.cpp)
 
 # Windows 特定链接库
 if(WIN32)
+    target_sources(Updater PRIVATE updater.rc)
     target_link_libraries(Updater
         shlwapi     # Shell API
     )

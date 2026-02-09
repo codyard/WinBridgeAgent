@@ -18,6 +18,7 @@
  */
 #include "support/dashboard_window.h"
 #include "support/localization_manager.h"
+#include "support/settings_window_ids.h"
 #include <windowsx.h>
 #include <commctrl.h>
 #include <sstream>
@@ -115,8 +116,11 @@ void DashboardWindow::registerWindowClass() {
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wc.lpszClassName = L"ClawDeskDashboardClass";
-    wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-    wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+    HINSTANCE hInst = GetModuleHandleW(NULL);
+    wc.hIcon = LoadIconW(hInst, MAKEINTRESOURCEW(IDI_APP_ICON));
+    wc.hIconSm = LoadIconW(hInst, MAKEINTRESOURCEW(IDI_APP_ICON));
+    if (!wc.hIcon) wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    if (!wc.hIconSm) wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
     
     if (!RegisterClassExW(&wc)) {
         // 注册失败，记录错误
@@ -138,7 +142,7 @@ void DashboardWindow::create() {
     // 创建窗口（置顶）
     std::wstring title = localizationManager_
         ? localizationManager_->getString("dashboard.title")
-        : L"ClawDesk MCP Server - Dashboard";
+        : L"WinBridgeAgent - Dashboard";
     hwnd_ = CreateWindowExW(
         WS_EX_TOPMOST | WS_EX_TOOLWINDOW,  // 置顶 + 工具窗口样式
         L"ClawDeskDashboardClass",

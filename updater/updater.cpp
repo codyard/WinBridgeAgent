@@ -182,7 +182,7 @@ HWND CreateProgressWindow() {
     HWND hwnd = CreateWindowExA(
         0,
         "UpdaterProgressClass",
-        "Updating ClawDesk MCP Server...",
+        "Updating WinBridgeAgent...",
         WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU,
         CW_USEDEFAULT, CW_USEDEFAULT,
         400, 150,

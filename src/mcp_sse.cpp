@@ -467,7 +467,7 @@ std::string HandleSseMessage(const std::string& request) {
             {"protocolVersion", kSupportedProtocolVersion},
             {"capabilities", {{"tools", nlohmann::json::object()}}},
             {"serverInfo", {
-                {"name", "ClawDesk MCP Server"},
+                {"name", "WinBridgeAgent"},
                 {"version", CLAWDESK_VERSION}
             }}
         };

@@ -1,0 +1,6 @@
+#include <windows.h>
+#include "../include/support/settings_window_ids.h"
+
+// Use the open-source repository root icon file as the single source of truth.
+// Path is relative to this .rc file: opensource/resources -> opensource/logo.ico
+IDI_APP_ICON ICON "../logo.ico"

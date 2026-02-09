@@ -28,6 +28,7 @@
 #include "support/license_manager.h"
 #include "support/dashboard_window.h"
 #include "support/settings_window.h"
+#include "support/settings_window_ids.h"
 #include "support/update_checker.h"
 #include "support/localization_manager.h"
 #include "policy/policy_guard.h"
@@ -56,7 +57,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 HMENU hMenu = CreatePopupMenu();
                 
                 // 状态信息（禁用，仅显示）
-                AppendMenuW(hMenu, MF_STRING | MF_DISABLED | MF_GRAYED, 0, L"ClawDesk MCP Server");
+                AppendMenuW(hMenu, MF_STRING | MF_DISABLED | MF_GRAYED, 0, L"WinBridgeAgent");
                 
                 // 获取配置信息
                 if (g_configManager) {
@@ -144,11 +145,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                     
                 case ID_TRAY_ABOUT:
                     MessageBox(hwnd, 
-                        "ClawDesk MCP Server v" CLAWDESK_VERSION "\n\n"
+                        "WinBridgeAgent v" CLAWDESK_VERSION "\n\n"
                         "Windows MCP Server\n"
                         "Secure system operations for AI assistants\n\n"
                         "Copyright (C) 2026",
-                        "About ClawDesk MCP Server",
+                        "About WinBridgeAgent",
                         MB_OK | MB_ICONINFORMATION);
                     break;
                     
@@ -522,8 +523,12 @@ bool CreateTrayIcon(HWND hwnd) {
     nid.uID = 1;
     nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
     nid.uCallbackMessage = WM_TRAYICON;
-    nid.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-    std::wstring tip = Localize("tray.tip", L"ClawDesk MCP Server - Running");
+    HINSTANCE hInst = g_hInstance ? g_hInstance : GetModuleHandleW(NULL);
+    nid.hIcon = LoadIconW(hInst, MAKEINTRESOURCEW(IDI_APP_ICON));
+    if (!nid.hIcon) {
+        nid.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    }
+    std::wstring tip = Localize("tray.tip", L"WinBridgeAgent - Running");
     size_t maxLen = sizeof(nid.szTip) / sizeof(nid.szTip[0]);
     // Convert wide string to ANSI for szTip
     WideCharToMultiByte(CP_ACP, 0, tip.c_str(), -1, nid.szTip, maxLen, NULL, NULL);
@@ -540,7 +545,7 @@ void UpdateTrayIconTooltip() {
     update.hWnd = g_hwnd;
     update.uID = 1;
     update.uFlags = NIF_TIP;
-    std::wstring tip = Localize("tray.tip", L"ClawDesk MCP Server - Running");
+    std::wstring tip = Localize("tray.tip", L"WinBridgeAgent - Running");
     size_t maxLen = sizeof(update.szTip) / sizeof(update.szTip[0]);
     // Convert wide string to ANSI for szTip
     WideCharToMultiByte(CP_ACP, 0, tip.c_str(), -1, update.szTip, maxLen, NULL, NULL);

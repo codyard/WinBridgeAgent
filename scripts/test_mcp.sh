@@ -17,13 +17,13 @@
 # along with WinBridgeAgent. If not, see <https://www.gnu.org/licenses/\>.
 
 
-# ClawDesk MCP Server - MCP Protocol Test Script
+# WinBridgeAgent - MCP Protocol Test Script
 # Test Model Context Protocol endpoints
 
-SERVER="http://192.168.31.3:35182"
+SERVER=${1:-"http://192.168.31.3:35182"}
 
 echo "=========================================="
-echo "ClawDesk MCP Server - MCP Protocol Test"
+echo "WinBridgeAgent - MCP Protocol Test"
 echo "=========================================="
 echo ""
 

@@ -1,6 +1,6 @@
 # Resources Directory
 
-This directory contains resource files for ClawDesk MCP Server.
+This directory contains resource files for WinBridgeAgent.
 
 ## Files
 

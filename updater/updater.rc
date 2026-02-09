@@ -1,0 +1,5 @@
+#include <windows.h>
+
+// Path is relative to opensource/updater.
+#define IDI_APP_ICON 100
+IDI_APP_ICON ICON "../logo.ico"

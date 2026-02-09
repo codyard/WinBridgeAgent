@@ -121,18 +121,25 @@ deploy_to_target() {
     fi
     
     # 检测远程服务器上的程序是否在运行
-    echo "Checking if ClawDesk MCP Server is running on $IP_ADDRESS..."
+    echo "Checking if WinBridgeAgent is running on $IP_ADDRESS..."
     
     # 尝试访问健康检查端点
     if curl -s --connect-timeout 2 http://$IP_ADDRESS:$PORT/health > /dev/null 2>&1; then
         echo "✓ Server is running, sending exit command..."
-        # 尝试从已部署的 config.json 读取 token
+        # 尝试从已部署的 config.json 读取 token（兼容旧目录名）
         AUTH_TOKEN=""
+        CONFIG_PATH=""
         if [ -f "$MOUNT_POINT/WinBridgeAgent/config.json" ]; then
+            CONFIG_PATH="$MOUNT_POINT/WinBridgeAgent/config.json"
+        elif [ -f "$MOUNT_POINT/ClawDeskMCP/config.json" ]; then
+            CONFIG_PATH="$MOUNT_POINT/ClawDeskMCP/config.json"
+        fi
+
+        if [ -n "$CONFIG_PATH" ]; then
             AUTH_TOKEN=$(python3 - <<PY
 import json
 try:
-    with open("$MOUNT_POINT/WinBridgeAgent/config.json","r",encoding="utf-8") as f:
+    with open("$CONFIG_PATH","r",encoding="utf-8") as f:
         data=json.load(f)
     token=data.get("auth_token") or data.get("security",{}).get("bearer_token") or ""
     print(token)

@@ -16,7 +16,7 @@
 # along with WinBridgeAgent. If not, see <https://www.gnu.org/licenses/\>.
 
 cmake_minimum_required(VERSION 3.20)
-project(WinBridgeAgent VERSION 0.8.105 LANGUAGES CXX)
+project(WinBridgeAgent VERSION 0.8.108 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -90,7 +90,7 @@ target_compile_definitions(WinBridgeAgent PRIVATE
     CLAWDESK_VERSION="${PROJECT_VERSION}"
 )
 if(WIN32)
-    target_sources(WinBridgeAgent PRIVATE resources/settings_window.rc)
+    target_sources(WinBridgeAgent PRIVATE resources/settings_window.rc resources/app_icon.rc)
     target_link_libraries(WinBridgeAgent PRIVATE
         ws2_32 gdi32 gdiplus user32 shell32 comdlg32 advapi32 ole32 uuid shlwapi 
         psapi powrprof comctl32 crypt32 dbghelp winhttp
@@ -110,6 +110,7 @@ target_compile_definitions(WinBridgeAgentDaemon PRIVATE
     CLAWDESK_VERSION="${PROJECT_VERSION}"
 )
 if(WIN32)
+    target_sources(WinBridgeAgentDaemon PRIVATE resources/app_icon.rc)
     target_link_libraries(WinBridgeAgentDaemon PRIVATE
         ws2_32 gdi32 gdiplus user32 shell32 comdlg32 advapi32 ole32 uuid shlwapi 
         psapi powrprof comctl32 crypt32

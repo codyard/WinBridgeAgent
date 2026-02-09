@@ -374,7 +374,7 @@ bool AddFirewallRule() {
     char command[1024];
     snprintf(command, sizeof(command),
         "netsh advfirewall firewall add rule "
-        "name=\"ClawDesk MCP Server\" "
+        "name=\"WinBridgeAgent\" "
         "dir=in "
         "action=allow "
         "program=\"%s\" "
@@ -411,7 +411,7 @@ bool AddFirewallRule() {
 // 检查防火墙规则是否存在
 bool CheckFirewallRule() {
     // 使用 netsh 检查规则是否存在
-    FILE* pipe = _popen("netsh advfirewall firewall show rule name=\"ClawDesk MCP Server\" 2>nul", "r");
+    FILE* pipe = _popen("netsh advfirewall firewall show rule name=\"WinBridgeAgent\" 2>nul", "r");
     if (!pipe) {
         return false;
     }
@@ -420,7 +420,7 @@ bool CheckFirewallRule() {
     bool ruleExists = false;
     
     while (fgets(buffer, sizeof(buffer), pipe) != NULL) {
-        if (strstr(buffer, "ClawDesk MCP Server") != NULL) {
+        if (strstr(buffer, "WinBridgeAgent") != NULL) {
             ruleExists = true;
             break;
         }

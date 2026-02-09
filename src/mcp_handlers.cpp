@@ -1547,7 +1547,7 @@ std::string HandleMCPInitialize(const std::string& body) {
         "\"protocolVersion\":\"2024-11-05\","
         "\"capabilities\":{\"tools\":{}},"
         "\"serverInfo\":{"
-            "\"name\":\"ClawDesk MCP Server\","
+            "\"name\":\"WinBridgeAgent\","
             "\"version\":\"" CLAWDESK_VERSION "\""
         "}"
     "}";
