@@ -12,6 +12,50 @@
 
 WinBridgeAgent is an open-source Windows local capability service that implements the Model Context Protocol (MCP) standard, providing traceable Windows system operations for AI assistants such as Claude Desktop, OpenAI, etc.
 
+## Architecture
+
+```
++------------------------------------------------------+
+|                Local Area Network (LAN)              |
+|                                                      |
+|   +--------------------+                             |
+|   |   MCP Client       |                             |
+|   | (OpenClaw / Agent) |                             |
+|   |  - LLM reasoning   |                             |
+|   |  - Tool planning   |                             |
+|   +---------+----------+                             |
+|             | MCP Protocol (HTTP/SSE)                |
+|             |                                        |
+|   +---------v------------------------------------+   |
+|   |           Windows PC                          |   |
+|   |                                              |   |
+|   |   +--------------------------------------+   |   |
+|   |   |  WinBridgeAgent                      |   |   |
+|   |   |  (Local Tray MCP Server)             |   |   |
+|   |   |                                      |   |   |
+|   |   |  - MCP Server (localhost / LAN)      |   |   |
+|   |   |  - Policy & Permission Guard         |   |   |
+|   |   |  - Tool Execution Layer              |   |   |
+|   |   |  - Audit & Logging                   |   |   |
+|   |   +-----------+--------------------------+   |   |
+|   |               |                              |   |
+|   |      +--------v--------+                     |   |
+|   |      | Windows System  |                     |   |
+|   |      | APIs / Resources|                     |   |
+|   |      | (FS / Screen /  |                     |   |
+|   |      |  Clipboard /    |                     |   |
+|   |      |  Process etc.)  |                     |   |
+|   |      +-----------------+                     |   |
+|   |                                              |   |
+|   +----------------------------------------------+   |
+|                                                      |
++------------------------------------------------------+
+
+Optional External Dependencies:
+- GitHub Releases (Auto Update)
+- Optional Remote Services (APIs, Cloud tools)
+```
+
 ## Features
 
 ### Core

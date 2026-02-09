@@ -12,6 +12,50 @@
 
 WinBridgeAgent 是一个开源的 Windows 本地能力服务，遵循 Model Context Protocol (MCP) 标准协议，为 AI 助理（如 Claude Desktop、OpenAI 等）提供可追溯的 Windows 系统操作能力。
 
+## 架构
+
+```
++------------------------------------------------------+
+|                Local Area Network (LAN)              |
+|                                                      |
+|   +--------------------+                             |
+|   |   MCP Client       |                             |
+|   | (OpenClaw / Agent) |                             |
+|   |  - LLM reasoning   |                             |
+|   |  - Tool planning   |                             |
+|   +---------+----------+                             |
+|             | MCP Protocol (HTTP/SSE)                |
+|             |                                        |
+|   +---------v------------------------------------+   |
+|   |           Windows PC                          |   |
+|   |                                              |   |
+|   |   +--------------------------------------+   |   |
+|   |   |  WinBridgeAgent                      |   |   |
+|   |   |  (Local Tray MCP Server)             |   |   |
+|   |   |                                      |   |   |
+|   |   |  - MCP Server (localhost / LAN)      |   |   |
+|   |   |  - Policy & Permission Guard         |   |   |
+|   |   |  - Tool Execution Layer              |   |   |
+|   |   |  - Audit & Logging                   |   |   |
+|   |   +-----------+--------------------------+   |   |
+|   |               |                              |   |
+|   |      +--------v--------+                     |   |
+|   |      | Windows System  |                     |   |
+|   |      | APIs / Resources|                     |   |
+|   |      | (FS / Screen /  |                     |   |
+|   |      |  Clipboard /    |                     |   |
+|   |      |  Process etc.)  |                     |   |
+|   |      +-----------------+                     |   |
+|   |                                              |   |
+|   +----------------------------------------------+   |
+|                                                      |
++------------------------------------------------------+
+
+Optional External Dependencies:
+- GitHub Releases (Auto Update)
+- Optional Remote Services (APIs, Cloud tools)
+```
+
 ## 功能特性
 
 ### 核心功能
