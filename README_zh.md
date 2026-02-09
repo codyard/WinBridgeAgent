@@ -63,9 +63,99 @@ WinBridgeAgent 是一个开源的 Windows 本地能力服务，遵循 Model Cont
 - Windows 10/11 (x64, x86, ARM64)
 - 无需额外运行时依赖
 
+## MCP 客户端配置
+
+WinBridgeAgent 可与任何兼容 MCP 的客户端配合使用。以下是常用客户端的配置方法。
+
+### Claude Desktop
+
+编辑 `claude_desktop_config.json`：
+
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+```json
+{
+    "mcpServers": {
+        "winbridgeagent": {
+            "url": "http://localhost:35182",
+            "transport": "http"
+        }
+    }
+}
+```
+
+如需连接局域网中的远程 Windows 电脑，将 `localhost` 替换为目标 IP 地址（如 `192.168.1.100`）。
+
+### Cursor
+
+1. 打开 **Settings** → **MCP**
+2. 点击 **Add new MCP server**
+3. 填写：
+   - **Name**: `winbridgeagent`
+   - **Type**: `http`
+   - **URL**: `http://localhost:35182`
+
+或编辑项目根目录下的 `.cursor/mcp.json`：
+
+```json
+{
+    "mcpServers": {
+        "winbridgeagent": {
+            "url": "http://localhost:35182",
+            "transport": "http"
+        }
+    }
+}
+```
+
+### Windsurf
+
+编辑 `~/.codeium/windsurf/mcp_config.json`：
+
+```json
+{
+    "mcpServers": {
+        "winbridgeagent": {
+            "serverUrl": "http://localhost:35182"
+        }
+    }
+}
+```
+
+### Cherry Studio
+
+1. 打开 **设置** → **MCP 服务器**
+2. 点击 **添加服务器**
+3. 选择 **Streamable HTTP** 类型
+4. 设置 URL 为 `http://localhost:35182`
+
+### Cline (VS Code)
+
+编辑 VS Code 设置中的 `cline_mcp_settings.json`：
+
+```json
+{
+    "mcpServers": {
+        "winbridgeagent": {
+            "url": "http://localhost:35182",
+            "transportType": "http"
+        }
+    }
+}
+```
+
+### 通用 MCP 客户端
+
+任何支持 HTTP 传输的 MCP 客户端均可使用以下信息连接：
+
+- **服务器 URL**: `http://<windows-ip>:35182`
+- **传输方式**: HTTP (Streamable HTTP)
+- **协议版本**: `2024-11-05`
+
 ## 多电脑部署
 
-如果你在局域网内有多台电脑都安装了 WinBridge Agent，可以通过 MCP 配置文件来管理和区分不同的电脑。
+如果你在局域网内有多台电脑都安装了 WinBridgeAgent，可以通过 MCP 配置文件来管理和区分不同的电脑。
 
 **快速配置**:
 

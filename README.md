@@ -65,7 +65,97 @@ WinBridgeAgent is an open-source Windows local capability service that implement
 1. Download the latest release from [GitHub Releases](https://github.com/codyard/WinBridgeAgent/releases)
 2. Run `WinBridgeAgent-x64.exe` (64-bit) or `WinBridgeAgent-x86.exe` (32-bit)
 3. The program appears in the system tray
-4. Access the API at `http://localhost:35182`
+4. Configure your MCP client (see below)
+
+## MCP Client Configuration
+
+WinBridgeAgent works with any MCP-compatible client. Below are setup instructions for popular clients.
+
+### Claude Desktop
+
+Edit `claude_desktop_config.json`:
+
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+```json
+{
+    "mcpServers": {
+        "winbridgeagent": {
+            "url": "http://localhost:35182",
+            "transport": "http"
+        }
+    }
+}
+```
+
+For a remote Windows PC on your LAN, replace `localhost` with its IP address (e.g. `192.168.1.100`).
+
+### Cursor
+
+1. Open **Settings** → **MCP**
+2. Click **Add new MCP server**
+3. Fill in:
+   - **Name**: `winbridgeagent`
+   - **Type**: `http`
+   - **URL**: `http://localhost:35182`
+
+Or edit `.cursor/mcp.json` in your project root:
+
+```json
+{
+    "mcpServers": {
+        "winbridgeagent": {
+            "url": "http://localhost:35182",
+            "transport": "http"
+        }
+    }
+}
+```
+
+### Windsurf
+
+Edit `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+    "mcpServers": {
+        "winbridgeagent": {
+            "serverUrl": "http://localhost:35182"
+        }
+    }
+}
+```
+
+### Cherry Studio
+
+1. Open **Settings** → **MCP Servers**
+2. Click **Add Server**
+3. Select **Streamable HTTP** type
+4. Set URL to `http://localhost:35182`
+
+### Cline (VS Code)
+
+Edit `cline_mcp_settings.json` in your VS Code settings:
+
+```json
+{
+    "mcpServers": {
+        "winbridgeagent": {
+            "url": "http://localhost:35182",
+            "transportType": "http"
+        }
+    }
+}
+```
+
+### Generic MCP Client
+
+Any MCP client that supports HTTP transport can connect using:
+
+- **Server URL**: `http://<windows-ip>:35182`
+- **Transport**: HTTP (Streamable HTTP)
+- **Protocol Version**: `2024-11-05`
 
 ## HTTP API
 
