@@ -1,6 +1,6 @@
 # WinBridgeAgent - MCP Protocol Documentation
 
-[中文文档](MCP_zh.md)
+[中文文档](MCP.md)
 
 ## Overview
 
