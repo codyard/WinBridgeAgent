@@ -2,50 +2,50 @@
 
 [中文文档](MCP_zh.md)
 
-## 概述
+## Overview
 
-WinBridgeAgent 实现了 Model Context Protocol (MCP) 标准协议，使 AI 助手能够通过标准化的方式调用 Windows 系统功能。
+WinBridgeAgent implements the Model Context Protocol (MCP) standard, enabling AI assistants to call Windows system functions through a standardized interface.
 
-**开源版本特性**：
-- ✅ 无需认证，直接访问所有 API
-- ✅ 完整的系统操作能力
-- ✅ 实时审计日志
-- ✅ 支持 HTTP 和 SSE 传输
+**Open Source Features**:
+- ✅ No authentication required, direct API access
+- ✅ Complete system operation capabilities
+- ✅ Real-time audit logging
+- ✅ HTTP and SSE transport support
 
-## MCP 协议版本
+## MCP Protocol Version
 
-- **协议版本**: 2024-11-05
-- **实现状态**: 完整实现
-- **发布日期**: 2026-02-06
-- **支持的功能**: 工具调用、资源访问、提示
+- **Protocol Version**: 2024-11-05
+- **Implementation Status**: Full Implementation
+- **Release Date**: 2026-02-06
+- **Supported Features**: Tool calling, resource access, prompts
 
-### 工具分类
+### Tool Categories
 
-| 分类 | 工具数量 | 工具列表 |
-|------|----------|----------|
-| 文件操作 | 8 | `read_file`, `write_file`, `list_directory`, `search_files`, `create_directory`, `delete_file`, `move_file`, `copy_file` |
-| 系统信息 | 4 | `list_disks`, `get_system_info`, `list_processes`, `list_windows` |
-| 剪贴板 | 2 | `read_clipboard`, `write_clipboard` |
-| 截图 | 3 | `take_screenshot`, `take_region_screenshot`, `take_window_screenshot` |
-| 电源管理 | 3 | `shutdown`, `restart`, `sleep` |
-| 执行命令 | 2 | `execute_command`, `execute_powershell` |
-| 浏览器 | 2 | `list_browser_tabs`, `close_browser_tab` |
+| Category | Tool Count | Tool List |
+|----------|------------|-----------|
+| File Operations | 8 | `read_file`, `write_file`, `list_directory`, `search_files`, `create_directory`, `delete_file`, `move_file`, `copy_file` |
+| System Information | 4 | `list_disks`, `get_system_info`, `list_processes`, `list_windows` |
+| Clipboard | 2 | `read_clipboard`, `write_clipboard` |
+| Screenshot | 3 | `take_screenshot`, `take_region_screenshot`, `take_window_screenshot` |
+| Power Management | 3 | `shutdown`, `restart`, `sleep` |
+| Command Execution | 2 | `execute_command`, `execute_powershell` |
+| Browser | 2 | `list_browser_tabs`, `close_browser_tab` |
 
-**总计**: 24 个工具
+**Total**: 24 tools
 
-## 连接配置
+## Connection Configuration
 
-### 基本连接
+### Basic Connection
 
 ```bash
-# 初始化 MCP 会话
+# Initialize MCP session
 curl -X POST \
   -H "Content-Type: application/json" \
   -d '{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}' \
   http://<windows-ip>:35182/mcp/initialize
 ```
 
-### 列出可用工具
+### List Available Tools
 
 ```bash
 curl -X POST \
@@ -54,203 +54,203 @@ curl -X POST \
   http://<windows-ip>:35182/mcp/tools/list
 ```
 
-### 调用工具示例
+### Tool Call Examples
 
 ```bash
-# 列出目录内容
+# List directory contents
 curl -X POST \
   -H "Content-Type: application/json" \
   -d '{"name":"list_directory","arguments":{"path":"C:\\"}}' \
   http://<windows-ip>:35182/mcp/tools/call
 
-# 读取文件
+# Read file
 curl -X POST \
   -H "Content-Type: application/json" \
   -d '{"name":"read_file","arguments":{"path":"C:\\test.txt"}}' \
   http://<windows-ip>:35182/mcp/tools/call
 
-# 执行命令
+# Execute command
 curl -X POST \
   -H "Content-Type: application/json" \
   -d '{"name":"execute_command","arguments":{"command":"dir"}}' \
   http://<windows-ip>:35182/mcp/tools/call
 ```
 
-## 工具详细说明
+## Tool Details
 
-### 文件操作工具
+### File Operation Tools
 
 #### `read_file`
-读取文件内容，支持行范围和尾部读取。
+Read file content with support for line ranges and tail reading.
 
-**参数**：
-- `path` (string, 必需): 文件路径
-- `start` (integer, 可选): 起始行号（从0开始）
-- `lines` (integer, 可选): 读取行数
-- `tail` (integer, 可选): 从文件末尾读取的行数
+**Parameters**:
+- `path` (string, required): File path
+- `start` (integer, optional): Start line number (0-based)
+- `lines` (integer, optional): Number of lines to read
+- `tail` (integer, optional): Number of lines to read from end
 
 #### `write_file`
-写入文件内容。
+Write content to file.
 
-**参数**：
-- `path` (string, 必需): 文件路径
-- `content` (string, 必需): 文件内容
-- `append` (boolean, 可选): 是否追加写入（默认false）
+**Parameters**:
+- `path` (string, required): File path
+- `content` (string, required): File content
+- `append` (boolean, optional): Whether to append (default false)
 
 #### `list_directory`
-列出目录内容。
+List directory contents.
 
-**参数**：
-- `path` (string, 必需): 目录路径
-- `show_hidden` (boolean, 可选): 是否显示隐藏文件（默认false）
+**Parameters**:
+- `path` (string, required): Directory path
+- `show_hidden` (boolean, optional): Show hidden files (default false)
 
 #### `search_files`
-在文件中搜索内容。
+Search content in files.
 
-**参数**：
-- `path` (string, 必需): 文件路径
-- `query` (string, 必需): 搜索关键词
-- `case_sensitive` (boolean, 可选): 是否区分大小写（默认false）
-- `max_results` (integer, 可选): 最大结果数（默认50）
+**Parameters**:
+- `path` (string, required): File path
+- `query` (string, required): Search keyword
+- `case_sensitive` (boolean, optional): Case sensitive (default false)
+- `max_results` (integer, optional): Maximum results (default 50)
 
-### 系统信息工具
+### System Information Tools
 
 #### `list_disks`
-获取所有磁盘驱动器信息。
+Get all disk drive information.
 
-**返回**：驱动器列表，包含盘符、类型、总空间、可用空间等。
+**Returns**: Drive list with drive letter, type, total space, free space, etc.
 
 #### `list_processes`
-获取运行中的进程列表。
+Get running process list.
 
-**返回**：进程列表，包含PID、名称、路径、内存使用等。
+**Returns**: Process list with PID, name, path, memory usage, etc.
 
 #### `list_windows`
-获取桌面窗口列表。
+Get desktop window list.
 
-**返回**：窗口列表，包含句柄、标题、类名、位置、大小等。
+**Returns**: Window list with handle, title, class name, position, size, etc.
 
-### 剪贴板工具
+### Clipboard Tools
 
 #### `read_clipboard`
-读取剪贴板内容。
+Read clipboard content.
 
-**返回**：支持文本、图片、文件三种类型。
+**Returns**: Supports text, image, and file types.
 
 #### `write_clipboard`
-写入内容到剪贴板。
+Write content to clipboard.
 
-**参数**：
-- `content` (string, 必需): 要写入的内容
+**Parameters**:
+- `content` (string, required): Content to write
 
-### 截图工具
+### Screenshot Tools
 
 #### `take_screenshot`
-截取整个屏幕。
+Capture entire screen.
 
-**参数**：
-- `format` (string, 可选): 图片格式（png/jpg，默认png）
-- `quality` (integer, 可选): JPEG质量（1-100，默认90）
+**Parameters**:
+- `format` (string, optional): Image format (png/jpg, default png)
+- `quality` (integer, optional): JPEG quality (1-100, default 90)
 
 #### `take_region_screenshot`
-截取屏幕区域。
+Capture screen region.
 
-**参数**：
-- `x` (integer, 必需): 起始X坐标
-- `y` (integer, 必需): 起始Y坐标
-- `width` (integer, 必需): 宽度
-- `height` (integer, 必需): 高度
-- `format` (string, 可选): 图片格式
+**Parameters**:
+- `x` (integer, required): Start X coordinate
+- `y` (integer, required): Start Y coordinate
+- `width` (integer, required): Width
+- `height` (integer, required): Height
+- `format` (string, optional): Image format
 
 #### `take_window_screenshot`
-截取指定窗口。
+Capture specific window.
 
-**参数**：
-- `window_title` (string, 可选): 窗口标题（部分匹配）
-- `process_name` (string, 可选): 进程名
+**Parameters**:
+- `window_title` (string, optional): Window title (partial match)
+- `process_name` (string, optional): Process name
 
-### 电源管理工具
+### Power Management Tools
 
 #### `shutdown`
-关闭计算机。
+Shutdown computer.
 
 #### `restart`
-重启计算机。
+Restart computer.
 
 #### `sleep`
-使计算机进入休眠状态。
+Put computer to sleep.
 
-### 执行命令工具
+### Command Execution Tools
 
 #### `execute_command`
-执行系统命令。
+Execute system command.
 
-**参数**：
-- `command` (string, 必需): 要执行的命令
-- `timeout` (integer, 可选): 超时时间（秒，默认30）
+**Parameters**:
+- `command` (string, required): Command to execute
+- `timeout` (integer, optional): Timeout in seconds (default 30)
 
 #### `execute_powershell`
-执行PowerShell命令。
+Execute PowerShell command.
 
-**参数**：
-- `script` (string, 必需): PowerShell脚本
-- `timeout` (integer, 可选): 超时时间（秒，默认30）
+**Parameters**:
+- `script` (string, required): PowerShell script
+- `timeout` (integer, optional): Timeout in seconds (default 30)
 
-### 浏览器工具
+### Browser Tools
 
 #### `list_browser_tabs`
-列出浏览器标签页。
+List browser tabs.
 
-**参数**：
-- `browser` (string, 可选): 浏览器类型（chrome/edge/firefox，自动检测）
+**Parameters**:
+- `browser` (string, optional): Browser type (chrome/edge/firefox, auto-detect)
 
 #### `close_browser_tab`
-关闭浏览器标签页。
+Close browser tab.
 
-**参数**：
-- `tab_id` (string, 必需): 标签页ID
-- `browser` (string, 可选): 浏览器类型
+**Parameters**:
+- `tab_id` (string, required): Tab ID
+- `browser` (string, optional): Browser type
 
-## 错误处理
+## Error Handling
 
-所有工具调用都遵循标准的 MCP 错误响应格式：
+All tool calls follow the standard MCP error response format:
 
 ```json
 {
   "content": [
     {
       "type": "text",
-      "text": "错误信息"
+      "text": "Error message"
     }
   ],
   "isError": true
 }
 ```
 
-常见错误：
-- 文件不存在
-- 权限不足
-- 路径无效
-- 命令执行失败
-- 超时
+Common errors:
+- File not found
+- Permission denied
+- Invalid path
+- Command execution failed
+- Timeout
 
-## 审计日志
+## Audit Logging
 
-开源版本提供完整的操作审计，所有操作都会记录到日志文件中：
+The open source version provides complete operation auditing. All operations are logged to:
 
-- 日志位置：`%LOCALAPPDATA%\WinBridgeAgent\logs\audit-YYYY-MM-DD.log`
-- 记录内容：时间戳、操作类型、参数、结果、客户端信息
+- Log location: `%LOCALAPPDATA%\WinBridgeAgent\logs\audit-YYYY-MM-DD.log`
+- Log content: Timestamp, operation type, parameters, result, client information
 
-## 安全说明
+## Security Notes
 
-开源版本移除了商业版的安全限制，但请注意：
+The open source version removes commercial security restrictions, but note:
 
-1. **网络安全**：如需局域网访问，请在设置中将监听地址改为 `0.0.0.0`
-2. **防火墙**：确保 Windows 防火墙允许端口 35182 的访问
-3. **权限**：程序以当前用户权限运行，无法执行需要管理员权限的操作
+1. **Network Security**: For LAN access, set listen address to `0.0.0.0` in settings
+2. **Firewall**: Ensure Windows Firewall allows port 35182 access
+3. **Permissions**: Program runs with current user privileges, cannot execute admin operations
 
-## 更多信息
+## More Information
 
-- 项目主页：https://github.com/codyard/WinBridgeAgent
-- MCP Registry：https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.codyard/winbridgeagent
-- 完整文档：README.md / README_zh.md
+- Project homepage: https://github.com/codyard/WinBridgeAgent
+- MCP Registry: https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.codyard/winbridgeagent
+- Full documentation: README.md / README_zh.md
