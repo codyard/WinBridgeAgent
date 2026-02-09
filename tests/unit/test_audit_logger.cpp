@@ -175,7 +175,7 @@ void testThreadSafety() {
     std::vector<std::thread> threads;
     
     for (int t = 0; t < numThreads; t++) {
-        threads.emplace_back([&logger, t]() {
+        threads.emplace_back([&logger, t, entriesPerThread]() {
             for (int i = 0; i < entriesPerThread; i++) {
                 AuditLogEntry entry;
                 entry.time = "2026-02-03T12:03:01.000Z";
