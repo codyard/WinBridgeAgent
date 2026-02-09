@@ -1,0 +1,14 @@
+#include <windows.h>
+#include <commctrl.h>
+#include "../include/support/settings_window_ids.h"
+
+IDD_SETTINGS_WINDOW DIALOGEX 0, 0, 380, 260
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Settings"
+FONT 9, "Segoe UI"
+BEGIN
+    CONTROL "Tab", IDC_SETTINGS_TAB, WC_TABCONTROL, WS_CHILD | WS_VISIBLE | WS_TABSTOP, 8, 8, 364, 200
+    DEFPUSHBUTTON "OK", IDOK, 212, 220, 50, 14
+    PUSHBUTTON "Cancel", IDCANCEL, 268, 220, 50, 14
+    PUSHBUTTON "Apply", IDC_BUTTON_APPLY, 324, 220, 50, 14
+END

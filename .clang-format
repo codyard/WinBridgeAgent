@@ -1,0 +1,68 @@
+# ClawDesk MCP Server - 代码风格配置
+# 基于 LLVM 风格微调，匹配项目现有习惯
+# 用法: clang-format -i src/**/*.cpp include/**/*.h
+
+Language: Cpp
+BasedOnStyle: LLVM
+
+# ── 缩进 ──────────────────────────────────────────
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ContinuationIndentWidth: 4
+IndentCaseLabels: false
+IndentPPDirectives: None
+NamespaceIndentation: None
+AccessModifierOffset: -4
+
+# ── 大括号 ────────────────────────────────────────
+BreakBeforeBraces: Attach
+# Attach = K&R 风格，左大括号跟在同一行
+
+# ── 列宽与换行 ────────────────────────────────────
+ColumnLimit: 120
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: true
+BinPackParameters: true
+
+# ── 指针与引用对齐 ────────────────────────────────
+PointerAlignment: Left
+ReferenceAlignment: Left
+# const char* buf, std::string& data
+
+# ── 空格 ──────────────────────────────────────────
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyBlock: false
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# ── Include 排序 ──────────────────────────────────
+SortIncludes: false
+# 不自动排序 include，因为 winsock2.h 必须在 windows.h 之前
+
+# ── 对齐 ──────────────────────────────────────────
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignEscapedNewlines: Left
+AlignOperands: true
+AlignTrailingComments: true
+
+# ── 其他 ──────────────────────────────────────────
+FixNamespaceComments: true
+MaxEmptyLinesToKeep: 2
+ReflowComments: false
+# 不自动重排注释，保留手写的中文注释排版

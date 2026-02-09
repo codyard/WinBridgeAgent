@@ -1,0 +1,30 @@
+{
+    "_comment": "Open-source edition — no auth token, no whitelist, no license required",
+    "server_port": 35182,
+    "auto_port": true,
+    "listen_address": "0.0.0.0",
+    "language": "en",
+    "auto_startup": false,
+    "daemon_enabled": true,
+    "command_timeout_seconds": 30,
+    "server": {
+        "port": 35182,
+        "auto_port": true,
+        "listen_address": "0.0.0.0"
+    },
+    "appearance": {
+        "dashboard_auto_show": true,
+        "dashboard_always_on_top": false,
+        "tray_icon_style": "normal",
+        "log_retention_days": 30
+    },
+    "update": {
+        "enabled": true,
+        "check_interval_hours": 6,
+        "channel": "stable",
+        "github_repo": "codyard/WinBridgeAgent",
+        "verify_signature": true,
+        "last_check": "",
+        "skipped_version": ""
+    }
+}
