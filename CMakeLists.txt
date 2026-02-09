@@ -16,7 +16,7 @@
 # along with WinBridgeAgent. If not, see <https://www.gnu.org/licenses/\>.
 
 cmake_minimum_required(VERSION 3.20)
-project(WinBridgeAgent VERSION 0.8.104 LANGUAGES CXX)
+project(WinBridgeAgent VERSION 0.8.105 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
