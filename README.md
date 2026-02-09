@@ -6,6 +6,7 @@
 [![MCP Protocol](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-green)](https://modelcontextprotocol.io)
 [![GitHub Release](https://img.shields.io/github/v/release/codyard/WinBridgeAgent?include_prereleases&sort=semver)](https://github.com/codyard/WinBridgeAgent/releases)
 [![GitHub Stars](https://img.shields.io/github/stars/codyard/WinBridgeAgent?style=social)](https://github.com/codyard/WinBridgeAgent)
+[![MCP Registry](https://img.shields.io/badge/MCP%20Registry-io.github.codyard%2Fwinbridgeagent-orange)](https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.codyard/winbridgeagent)
 
 [中文文档](README_zh.md)
 
@@ -61,6 +62,12 @@ WinBridgeAgent is an open-source Windows local capability service that implement
 - No additional runtime dependencies
 
 ## Quick Start
+
+### Install from MCP Registry
+
+WinBridgeAgent is published on the [MCP Registry](https://registry.modelcontextprotocol.io) as `io.github.codyard/winbridgeagent`. MCP clients that support the registry can install it directly.
+
+### Manual Install
 
 1. Download the latest release from [GitHub Releases](https://github.com/codyard/WinBridgeAgent/releases)
 2. Run `WinBridgeAgent-x64.exe` (64-bit) or `WinBridgeAgent-x86.exe` (32-bit)

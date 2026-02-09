@@ -6,6 +6,7 @@
 [![MCP Protocol](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-green)](https://modelcontextprotocol.io)
 [![GitHub Release](https://img.shields.io/github/v/release/codyard/WinBridgeAgent?include_prereleases&sort=semver)](https://github.com/codyard/WinBridgeAgent/releases)
 [![GitHub Stars](https://img.shields.io/github/stars/codyard/WinBridgeAgent?style=social)](https://github.com/codyard/WinBridgeAgent)
+[![MCP Registry](https://img.shields.io/badge/MCP%20Registry-io.github.codyard%2Fwinbridgeagent-orange)](https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.codyard/winbridgeagent)
 
 [English](README.md)
 
@@ -62,6 +63,19 @@ WinBridgeAgent 是一个开源的 Windows 本地能力服务，遵循 Model Cont
 
 - Windows 10/11 (x64, x86, ARM64)
 - 无需额外运行时依赖
+
+## 快速开始
+
+### 从 MCP Registry 安装
+
+WinBridgeAgent 已发布到 [MCP Registry](https://registry.modelcontextprotocol.io)，名称为 `io.github.codyard/winbridgeagent`。支持 Registry 的 MCP 客户端可直接安装。
+
+### 手动安装
+
+1. 从 [GitHub Releases](https://github.com/codyard/WinBridgeAgent/releases) 下载最新版本
+2. 运行 `WinBridgeAgent-x64.exe`（64位系统）或 `WinBridgeAgent-x86.exe`（32位系统）
+3. 程序会在系统托盘显示图标
+4. 配置你的 MCP 客户端（见下方）
 
 ## MCP 客户端配置
 
