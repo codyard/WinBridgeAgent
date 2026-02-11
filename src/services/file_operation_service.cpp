@@ -48,12 +48,41 @@ static std::string toLower(const std::string& str) {
     return result;
 }
 
+static std::string trimAscii(const std::string& input) {
+    size_t begin = 0;
+    size_t end = input.size();
+    while (begin < end && std::isspace(static_cast<unsigned char>(input[begin]))) {
+        ++begin;
+    }
+    while (end > begin && std::isspace(static_cast<unsigned char>(input[end - 1]))) {
+        --end;
+    }
+    return input.substr(begin, end - begin);
+}
+
 // 检查字符串是否以指定前缀开始
 static bool startsWith(const std::string& str, const std::string& prefix) {
     if (str.length() < prefix.length()) {
         return false;
     }
     return str.compare(0, prefix.length(), prefix) == 0;
+}
+
+static bool isSameOrChildPath(const std::string& path, const std::string& base) {
+    if (path == base) {
+        return true;
+    }
+    if (path.size() <= base.size()) {
+        return false;
+    }
+    if (path.compare(0, base.size(), base) != 0) {
+        return false;
+    }
+    // Drive root like "g:\" already ends with separator, so any prefixed child is valid.
+    if (!base.empty() && base.back() == '\\') {
+        return true;
+    }
+    return path[base.size()] == '\\';
 }
 
 // ===== 构造函数 =====
@@ -332,11 +361,14 @@ bool FileOperationService::isPathAllowed(const std::string& path) {
     }
 
     std::string normalizedPath = normalizePath(path);
+    if (normalizedPath.empty()) {
+        return false;
+    }
     std::vector<std::string> allowedDirs = configManager_->getAllowedDirs();
 
     for (const auto& allowedDir : allowedDirs) {
         std::string normalizedAllowedDir = normalizePath(allowedDir);
-        if (startsWith(normalizedPath, normalizedAllowedDir)) {
+        if (!normalizedAllowedDir.empty() && isSameOrChildPath(normalizedPath, normalizedAllowedDir)) {
             return true;
         }
     }
@@ -348,7 +380,7 @@ bool FileOperationService::isSystemDirectory(const std::string& path) {
     std::string normalizedPath = normalizePath(path);
 
     for (const auto& forbiddenDir : FORBIDDEN_DIRS) {
-        if (startsWith(normalizedPath, forbiddenDir)) {
+        if (isSameOrChildPath(normalizedPath, forbiddenDir)) {
             return true;
         }
     }
@@ -492,16 +524,30 @@ int64_t FileOperationService::getFileSize(const std::string& path) {
 }
 
 std::string FileOperationService::normalizePath(const std::string& path) {
-    std::string normalized = path;
+    std::string normalized = trimAscii(path);
+    if (normalized.size() >= 2 &&
+        ((normalized.front() == '"' && normalized.back() == '"') ||
+         (normalized.front() == '\'' && normalized.back() == '\''))) {
+        normalized = normalized.substr(1, normalized.size() - 2);
+    }
+    if (normalized.empty()) {
+        return normalized;
+    }
     
     // 将所有斜杠转换为反斜杠
     std::replace(normalized.begin(), normalized.end(), '/', '\\');
+
+    char fullPath[MAX_PATH] = {0};
+    DWORD fullLen = GetFullPathNameA(normalized.c_str(), MAX_PATH, fullPath, NULL);
+    if (fullLen > 0 && fullLen < MAX_PATH) {
+        normalized.assign(fullPath, fullLen);
+    }
     
     // 转换为小写
     normalized = toLower(normalized);
     
     // 移除末尾的反斜杠（除非是根目录）
-    if (normalized.length() > 3 && normalized.back() == '\\') {
+    while (normalized.length() > 3 && normalized.back() == '\\') {
         normalized.pop_back();
     }
     
